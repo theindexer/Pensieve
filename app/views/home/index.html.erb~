@@ -1,3 +1,5 @@
+<%= javascript_include_tag "arbor" %>
+
 <script>
      $(document).ready(function(){
         $('#viewport').width = $('#resizable').clientWidth;
