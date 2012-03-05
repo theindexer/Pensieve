@@ -93,7 +93,7 @@
             _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top).subtract(canvasOffset)
             prevPoint = arbor.Point(e.pageX,e.pageY)
             dragged = particleSystem.nearest(_mouseP);
-            if(dragged.distance > 20){
+            if(dragged.distance > 50){
               dragged = null
             }
             if (dragged && dragged.node !== null){
@@ -135,7 +135,7 @@
             var pos = $(canvas).offset();
             _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top).subtract(canvasOffset)
             dragged = particleSystem.nearest(_mouseP);
-            if (dragged && dragged.node !== null && dragged.distance < 20){
+            if (dragged && dragged.node !== null && dragged.distance < 50){
               if(!dragged.node.data.link){
                 if(!dragged.node.data.expanded){
                   expandOnce(dragged.node,particleSystem)
@@ -171,7 +171,6 @@
                 var link = myNode.data.text
                 link = link.replace(new RegExp( " ", "g" ), "_")
                 var dat = {"page":link}
-                alert(link)
                 $.ajax({
                   url: "wiki/fetch",
                   dataType: 'text',
