@@ -1,5 +1,4 @@
 
-  <!-- run from the minified library file: -->
 <%= stylesheet_link_tag "jquery-ui-1.8.18.custom.css" %>
 <%= javascript_include_tag "arbor.js" %>
 <%= javascript_include_tag "main.js" %>
@@ -11,7 +10,7 @@
 	$('#resizable').resizable();
         var dat = {"page":"Dana_Hills_High_School"}
         $.ajax({
-          url: "/fetch",
+          url: "wiki/fetch",
           dataType: 'text',
           data:dat,
           success: function(data){
