@@ -1,5 +1,4 @@
 
-<%= stylesheet_link_tag "jquery-ui-1.8.18.custom.css" %>
 <%= javascript_include_tag "arbor.js" %>
 <%= javascript_include_tag "main.js" %>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
