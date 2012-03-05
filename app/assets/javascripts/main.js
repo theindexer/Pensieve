@@ -119,8 +119,8 @@
             if(dragged==null){
               var curPoint = arbor.Point(e.pageX,e.pageY)
               var newPoint = curPoint.subtract(prevPoint)
-              ctx.translate(newPoint.x,newPoint.y)
-              canvasOffset = canvasOffset.add(newPoint)
+              //ctx.translate(newPoint.x,newPoint.y)
+              //canvasOffset = canvasOffset.add(newPoint)
               prevPoint = curPoint
             }
             if (dragged && dragged.node !== null){
