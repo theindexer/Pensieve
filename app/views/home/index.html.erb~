@@ -1,7 +1,5 @@
-
-<%= javascript_include_tag "application.js" %>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-<%= javascript_include_tag "jquery-ui-1.8.18.custom.min.js" %>
+<%= javascript_include_tag "application.js" %>
 <script>
      $(document).ready(function(){
         $('#viewport').width = $('#resizable').clientWidth;
