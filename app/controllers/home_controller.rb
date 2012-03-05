@@ -109,29 +109,36 @@ end
 class HomeController < ApplicationController
   def index
   end
-  def fetch
+  def fetch #this is an AJAX method
     require 'xml'
     require 'net/http'
     @toParse = params[:page]
     logger.info @toParse
     Net::HTTP.start( 'en.wikipedia.org', 80 ) do |http|
       xml=( http.get( '/w/api.php?action=parse&format=xml&page='+@toParse+'&redirects&prop=text', "User-Agent" => "Jesse Sharps (MIT, testing random things)" ).body ) ; 
-
+      #page level node
       node = WikiNode.new(@toParse,0)
       node.parentTo(node)
       currentNode = node
       sections = Hash.new
+      #parse the section that gives section/number info i.e. "1.2.1 Section"
       regex= /tocnumber&quot;&gt;(.*?)&lt;.*?toctext&quot;&gt;(.*?)&lt;/
       xml.scan(regex).each do |match|
         sections[match[1]]=match[0]
       end
-      regex = /span class=&quot;mw-headline&quot; id=&quot.*?&quot;&gt;(.*?)&lt;|a href=&quot;\/wiki\/([^=]*?)&quot; title=&quot;(.*?)&quot;/
+      #parse sections and links into nodes
+      regex = /span class=&quot;mw-headline&quot; id=&quot.*?&quot;&gt;(?:&lt;.*?&gt;)*(.*?)&lt;|a href=&quot;\/wiki\/([^=]*?)&quot; title=&quot;(.*?)&quot;/
       xml.scan(regex).each do |match|
-        if match[0] != nil
+        if match[0] != nil #this is a section
           if match[0].index("References") == 0
             next
           end
-          newnode = WikiNode.new(match[0],sections[match[0]])
+          logger.info match[0] + " fuck my life"
+          section = sections[match[0]]
+          if not section
+            section="1"
+          end
+          newnode = WikiNode.new(match[0],section)
           if currentNode.isParentOf(newnode)
             newnode.parentTo(currentNode)
             currentNode.addSection(newnode)
@@ -139,7 +146,7 @@ class HomeController < ApplicationController
             parent = currentNode.parent
             while not parent.isParentOf(newnode)
               if parent.parent==parent
-                break
+                break #pop up until parent found
               end
               parent = parent.parent
             end
@@ -147,17 +154,17 @@ class HomeController < ApplicationController
             parent.addSection(newnode)
           end
           currentNode = newnode
-        else
+        else #this is a link
           if match[1].index("Wikipedia:") == 0
-            next
+            next #ignore meta internal links
           end
           link = Link.new(match[2],match[1])
           currentNode.addLink(link)
         end
       end
-    @page = node.to_json.inspect
-    @page=@page.gsub("=>",":").gsub("'","\\\\'")
-    render:json => @page
+    @page = node.to_json.inspect #necessary for some reason
+    @page=@page.gsub("=>",":").gsub("'","\\\\'") #replace shit with shit
+    render:json => @page #return
     #puts posts
     end
 
