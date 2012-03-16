@@ -6,11 +6,12 @@
 
 (function($){
 
-  var Renderer = function(canvas, noode){
+  var Renderer = function(canvas, nodediv){
     var canvas = $(canvas).get(0)
-    var ctx = canvas.getContext("2d");
+//    var ctx = canvas.getContext("2d");
     var particleSystem
-    var noodle = noode
+    var NodeDiv = nodediv
+    var currentNode = 0
     var canvasOffset = arbor.Point(0,0)
     var prevPoint;
     var that = {
@@ -136,9 +137,25 @@
             _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top).subtract(canvasOffset)
             dragged = particleSystem.nearest(_mouseP);
             if (dragged && dragged.node !== null && dragged.distance < 50){
-              if(!dragged.node.data.link){
+              alert("raaage")
+                if(!dragged.node.data.link){
+                  alert("FUCCCCC")
                 if(!dragged.node.data.expanded){
+                  alert("dicks")
                   expandOnce(dragged.node,particleSystem)
+                  $("#nodes").prepend("<li class='node' id='"+currentNode+"'>hi</li>");
+                  $("#"+currentNode).click(function(e){
+                    alert("shit");   
+                  });
+                  alert("fuck");
+                  $("#"+currentNode).mouseover(function(e){
+                  $(e.currentTarget).css("background-color","yellow");
+                  });
+                  $("#"+currentNode).mouseout(function(e){
+                    $(e.currentTarget).css("background-color","green");
+                  });
+                  currentNode++
+
                 } else {
                   implode(dragged.node, particleSystem)
                 }
@@ -158,12 +175,30 @@
             $(canvas).unbind('mousemove', handler.dragged)
             $(window).unbind('mouseup', handler.dropped)
             _mouseP = null
+            alert("ARGH")
+            console.log("FUCK THIS SHIT");
             if((end-start) < 200){
               if(!myNode.data.link){
+                alert("superfts")
                 if(!myNode.data.expanded){
+                  alert("fts")
                   expandOnce(myNode,particleSystem,myNode)
+                  $("#nodes").prepend("<li class='node' id='"+currentNode+"'>hi</li>");
+                  $("#"+currentNode).click(function(e){
+                    alert("shit");
+                  });
+                  alert("fuck");
+                  $("#"+currentNode).mouseover(function(e){
+                  $(e.currentTarget).css("background-color","yellow");
+                  });
+                  $("#"+currentNode).mouseout(function(e){
+                    $(e.currentTarget).css("background-color","green");
+                  });
+                  currentNode++
+
                 } else {
                   if(!myNode.data.root){
+                    Window.alert("fuck")
                   implode(myNode, particleSystem,myNode)
                   }
                 }
@@ -250,9 +285,11 @@
     }
   }
 
-  startGraph = function(arraystuff){
+  startGraph = function(arraystuff,nodeDiv){
     var sys = arbor.ParticleSystem(500, 100, 0.0,true) // create the system with sensible repulsion/stiffness/friction
     sys.renderer = Renderer("#viewport","fuuu") // our newly created renderer will have its .init() method called shortly by sys...
+    console.log("fuck")
+    a;sdlkjf;sl
     initNodes(arraystuff,sys);
   }
   initNodes = function(arraystuff,sys){
