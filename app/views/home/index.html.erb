@@ -1,8 +1,12 @@
 <script src="/assets/arbor.js"></script>
 <script>
      $(document).ready(function(){
-        $('#viewport').width = $('#resizable').clientWidth;
-	$('#resizable').resizable();
+        var func = function(arg){
+          alert("hi");
+        }
+        var currentNode=0
+        $('#viewport').width = $('#back').clientWidth;
+        
         var dat = {"page":"Dana_Hills_High_School"}
         $.ajax({
           url: "wiki/fetch",
@@ -10,40 +14,47 @@
           data:dat,
           success: function(data){
             var text= $('<div/>').html(data).text();
-            startGraph(text.replace("\\","\\\\","g"));
+            startGraph(text.replace("\\","\\\\","g"),"#nodes");
           }
- 
         });
-});
+        });
 </script>
 <style type="text/css">
-div
+#back
 {
-width: 1100px;
 height: 600px;
 padding: 0.5em;
 background-color:red;
 overflow: hidden;
 }
+li
+{
+list-style-type:none;
+text-align:center
+}
+div.inline
+{
+display: inline-block;
+vertical-align: top;
+background-color:green;
+height:90%;
+width: 250px;
+overflow-y: scroll;
+border-style:groove;
+border-width:2px;
+border-color:gray;
+}
+.scroll-pane
+{
+	width: 100%;
+	height: 200px;
+	overflow: auto;
+}
 </style>
-<div id="resizable" class="ui-widget-content">
+<div id="back">
   <canvas id="viewport" width="1000" height="600"></canvas>
+  <div class="inline" id ="nodes">My Nodes<p/><li class="node">hi</li></div>
 </div>
-  
 
-  <!-- run from the original source files: -->
-  <!-- <script src="../../src/etc.js"></script>
-<script src="../../src/kernel.js"></script>
-<script src="../../src/graphics/colors.js"></script>
-<script src="../../src/graphics/primitives.js"></script>
-<script src="../../src/graphics/graphics.js"></script>
-<script src="../../src/tween/easing.js"></script>
-<script src="../../src/tween/tween.js"></script>
-<script src="../../src/physics/atoms.js"></script>
-<script src="../../src/physics/physics.js"></script>
-<script src="../../src/physics/system.js"></script>
-<script src="../../src/dev.js"></script> -->
-
-<!--</body>
-</html>-->
-
+ </body> 
+</html>
