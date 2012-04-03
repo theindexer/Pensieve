@@ -67,6 +67,9 @@
         $("#do-search").button().click(function(){
           $("#search-wikipedia").dialog("open");
         });
+        function emptyPath(){
+          $('#nodes').empty();
+        }
         });
 </script>
 <style type="text/css">
