@@ -1,37 +1,80 @@
 <script src="/assets/arbor.js"></script>
-<script src="/assets/jquery.jscrollpane.min.js"></script>
 <script>
      $(document).ready(function(){
         var func = function(arg){
           alert("hi");
         }
-        $('.scroll-pane').jScrollPane();
+        var currentNode=0
         $('#viewport').width = $('#back').clientWidth;
-        $("#viewport").click(function(e){
-          $('#nodes').append("<li class='node'>hi</li>");
-          $('.scroll-pane').jScrollPane();
-          $(".node").click(function(e){
-          });
-          $(".node").mouseover(function(e){
-            $(e.currentTarget).css("background-color","yellow");
-          });
-          $(".node").mouseout(function(e){
-            $(e.currentTarget).css("background-color","red");
-          });
-        });
         
-        var dat = {"page":"Dana_Hills_High_School"}
-	});
-        $(".node").click(function(e){
+        var dat = {"page":"Wikipedia"}
+        $.ajax({
+          url: "wiki/fetch",
+          dataType: 'text',
+          data:dat,
+          success: function(data){
+            var text= $('<div/\>').html(data).text();
+            startGraph(text.replace("\\","\\\\","g"),"#nodes");
+          }
+        });
+        $("#search-wikipedia").dialog({
+          autoOpen: false,
+	  height: 400,
+	  width: 600,
+	  modal: true,
+	  buttons: {
+	    "Do Search!": function() {
+              var searchData = {"page":$("#query").val().replace(new RegExp(" ","g"),"+")}
+              $("#search-results").empty();
+              $.ajax({
+                url: "wiki/doSearch",
+                dataType: 'xml',
+                data:searchData,
+                success: function(data){
+                  xmlDoc = data
+                  var result=xmlDoc.getElementsByTagName("Item");
+                  if(result.length==0){
+                    $("#search-results").append("No results"); return;
+                  }
+                  var locali
+                  for (i=0; i < result.length; i++){
+                    var localResult = "<button id="+i+"button class='resultbutton'>"+result[i].getElementsByTagName("Text")[0].childNodes[0].nodeValue + "</button><br>";
+                    localResult +=result[i].getElementsByTagName("Description")[0].childNodes[0].nodeValue+"<br>";
+                  $("#search-results").append(localResult);
+                    locali = i
+                  $("#"+locali+"button").button().click(function(){
+                    var url = result[this.id.substr(0,1)].getElementsByTagName("Url")[0].childNodes[0].nodeValue;
+                    url = url.substr(url.indexOf("wiki/")+5)
+                    initGraphFromUrl(url)
+                    $( "#search-wikipedia" ).dialog( "close" );
+                    emptyPath();
+                    });
+
+                  }
+                }
+              });
+					
+	     },
+	     Cancel: function() {
+	      $( this ).dialog( "close" );
+	      }
+           },
+			close: function() {
+				$('#query').val( "" );
+                                $("#search-results").empty();
+			}
+        });
+        $("#do-search").button().click(function(){
+          $("#search-wikipedia").dialog("open");
+        });
         });
 </script>
 <style type="text/css">
 #back
 {
-width: 1200px;
 height: 600px;
 padding: 0.5em;
-background-color:red;
+background-color:white;
 overflow: hidden;
 }
 li
@@ -43,10 +86,21 @@ div.inline
 {
 display: inline-block;
 vertical-align: top;
-background-color:green;
-height:20%;
-width: 100px;
-overflow: auto;
+background-color:white;
+height:90%;
+width: 250px;
+overflow-y: scroll;
+border-style:groove;
+border-width:2px;
+border-color:gray;
+}
+.search-wikipedia
+{
+background:white;
+}
+.resultbutton
+{
+min-width:300px
 }
 .scroll-pane
 {
@@ -54,27 +108,35 @@ overflow: auto;
 	height: 200px;
 	overflow: auto;
 }
+.ui-button-text {
+  font-size: inherit;
+}
+
+label, input { display:block; }
+		input.text { margin-bottom:12px; width:95%; padding: .4em; }
+		fieldset { padding:0; border:0; margin-top:25px; }
+		div#users-contain { width: 350px; margin: 20px 0; }
+		div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+		div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+		.ui-dialog .ui-state-error { padding: .3em; }
+		.validateTips { border: 1px solid transparent; padding: 0.3em; }
 </style>
+
+<button id="do-search">Start new wikipath!</button>
+<br/>
 <div id="back">
-  <canvas id="viewport" width="1000" height="600"></canvas>
+  <canvas id="viewport" width="800px" height="600"></canvas>
   <div class="inline" id ="nodes">My Nodes<p/><li class="node">hi</li></div>
 </div>
-
-  
-
-  <!-- run from the original source files: -->
-  <!-- <script src="../../src/etc.js"></script>
-<script src="../../src/kernel.js"></script>
-<script src="../../src/graphics/colors.js"></script>
-<script src="../../src/graphics/primitives.js"></script>
-<script src="../../src/graphics/graphics.js"></script>
-<script src="../../src/tween/easing.js"></script>
-<script src="../../src/tween/tween.js"></script>
-<script src="../../src/physics/atoms.js"></script>
-<script src="../../src/physics/physics.js"></script>
-<script src="../../src/physics/system.js"></script>
-<script src="../../src/dev.js"></script> -->
-
-<!--</body>
-</html>-->
-
+<div id="search-wikipedia" title="Start a new Wikipath!">
+	<form>
+	<fieldset>
+		<label for="query">Search Topic</label>
+		<input type="text" name="query" id="query" class="text ui-widget-content ui-corner-all" />
+	</fieldset>
+	</form>
+        <div id="search-results">
+        </div>
+</div>
+ </body> 
+</html>

@@ -5,10 +5,13 @@
 //
 
 (function($){
-
+  var rootNode
+  var splitText = function(string) {
+    var charlimit = 14
+  }
   var Renderer = function(canvas, nodediv){
     var canvas = $(canvas).get(0)
-//    var ctx = canvas.getContext("2d");
+    var ctx = canvas.getContext("2d");
     var particleSystem
     var NodeDiv = nodediv
     var currentNode = 0
@@ -46,13 +49,22 @@
         // 
         ctx.fillStyle = "white"
         ctx.fillRect(0,0, canvas.width, canvas.height)
-        
+        var Color = function(red, green, blue){
+          this.red = red
+          this.green = green
+          this.blue = blue
+          this.string = red+","+green+","+blue
+        }
+        var invert = function(color){
+          return Color(255-color.red,255-color.green,255-color.blue)
+        }
         particleSystem.eachEdge(function(edge, pt1, pt2){
           // edge: {source:Node, target:Node, length:#, data:{}}
           // pt1:  {x:#, y:#}  source position in screen coords
           // pt2:  {x:#, y:#}  target position in screen coords
           // draw a line from pt1 to pt2
-          ctx.strokeStyle = "rgba(0,0,0, .666)"
+          var white = new Color(0,0,0)
+          ctx.strokeStyle = "rgba("+white.string+", .666)"
           ctx.strokeStyle = (edge.data.color) ? edge.data.color : ctx.strokeStyle
           ctx.lineWidth = 2
           ctx.beginPath()
@@ -64,20 +76,34 @@
         particleSystem.eachNode(function(node, pt){
           // node: {mass:#, p:{x,y}, name:"", data:{}}
           // pt:   {x:#, y:#}  node position in screen coords
-
-          // draw a rectangle centered at pt
-          var w = 20
-          ctx.fillStyle = (node.data.root) ? "orange" : (node.data.oldRoot) ? "purple" : "black"
+          var w = 30
+          var rootColor = new Color(255,255,20)
+          var rootText = new Color(0,0,235)
+          var sectColor = new Color(100,0,100)
+          var sectText = new Color(155,255,155)
+          ctx.fillStyle = (node.data.root) ? "rgb("+rootColor.string+")" : "rgb("+sectColor.string+")"
           if(node.data.link){
-            w=40
+            w=30
             ctx.fillStyle = "blue"
           }
           ctx.font = "12pt Arial"
           var metrics = ctx.measureText(node.data.text);
-          var width = metrics.width;
+          var width = Math.max(metrics.width,80);
           ctx.fillRect(pt.x-width/2, pt.y-w/2, width,w);
-          ctx.fillStyle = "red";
-          ctx.fillText(node.data.text.replace(new RegExp("_","g")," "), pt.x-width/2, pt.y+5)
+          ctx.beginPath();
+          ctx.arc(pt.x-width/2+1,pt.y,w/2,Math.PI/2,3*Math.PI/2,false);
+          ctx.closePath();
+          ctx.fill();
+          ctx.beginPath()
+          ctx.arc(pt.x+width/2-1,pt.y,w/2,Math.PI/2,3*Math.PI/2,true);
+          ctx.closePath();
+          ctx.fill();
+          if(node.data.root){
+            ctx.fillStyle = "rgb("+rootText.string+")"
+          } else {
+            ctx.fillStyle = "rgb(" + sectText.string+")"
+          }
+          ctx.fillText(node.data.text.replace(new RegExp("_","g")," "), pt.x-metrics.width/2, pt.y+5)
         })    			
       },
       
@@ -137,25 +163,9 @@
             _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top).subtract(canvasOffset)
             dragged = particleSystem.nearest(_mouseP);
             if (dragged && dragged.node !== null && dragged.distance < 50){
-              alert("raaage")
                 if(!dragged.node.data.link){
-                  alert("FUCCCCC")
                 if(!dragged.node.data.expanded){
-                  alert("dicks")
                   expandOnce(dragged.node,particleSystem)
-                  $("#nodes").prepend("<li class='node' id='"+currentNode+"'>hi</li>");
-                  $("#"+currentNode).click(function(e){
-                    alert("shit");   
-                  });
-                  alert("fuck");
-                  $("#"+currentNode).mouseover(function(e){
-                  $(e.currentTarget).css("background-color","yellow");
-                  });
-                  $("#"+currentNode).mouseout(function(e){
-                    $(e.currentTarget).css("background-color","green");
-                  });
-                  currentNode++
-
                 } else {
                   implode(dragged.node, particleSystem)
                 }
@@ -175,19 +185,43 @@
             $(canvas).unbind('mousemove', handler.dragged)
             $(window).unbind('mouseup', handler.dropped)
             _mouseP = null
-            alert("ARGH")
             console.log("FUCK THIS SHIT");
             if((end-start) < 200){
               if(!myNode.data.link){
-                alert("superfts")
                 if(!myNode.data.expanded){
-                  alert("fts")
                   expandOnce(myNode,particleSystem,myNode)
-                  $("#nodes").prepend("<li class='node' id='"+currentNode+"'>hi</li>");
+
+                } else {
+                  if(!myNode.data.root){
+                  implode(myNode, particleSystem,myNode)
+                  }
+                }
+              } else {
+                $('#back').block({message:null})
+                var link = myNode.data.url
+                  var oldLink = rootNode.data.url
+                  $(NodeDiv).prepend("<li class='node' id='"+currentNode+"'>"+rootNode.data.text.replace(new RegExp("_","g")," ")+"</li>");
+                  var nodeID = currentNode
                   $("#"+currentNode).click(function(e){
-                    alert("shit");
+                  $('#back').block({message:null})
+                  console.log(oldLink+"yay")
+                  $.ajax({
+                  url: "wiki/fetch",
+                  dataType: 'text',
+                  data: "page="+oldLink,
+                  processData: false,
+                  success: function(data){
+                    $('#back').unblock()
+                    while ($("#"+nodeID).remove().length!=0){
+                      nodeID++
+                      console.log("nope")
+                    }
+                    var text= $('<div/>').html(data).text().replace(new RegExp("\\\\","g"),"\\\\");
+                    initNodes(text,particleSystem);
+                  }
+                });
+
                   });
-                  alert("fuck");
                   $("#"+currentNode).mouseover(function(e){
                   $(e.currentTarget).css("background-color","yellow");
                   });
@@ -196,21 +230,15 @@
                   });
                   currentNode++
 
-                } else {
-                  if(!myNode.data.root){
-                    Window.alert("fuck")
-                  implode(myNode, particleSystem,myNode)
-                  }
-                }
-              } else {
-                var link = myNode.data.text
+
                 link = link.replace(new RegExp( " ", "g" ), "_")
-                var dat = {"page":link}
                 $.ajax({
                   url: "wiki/fetch",
                   dataType: 'text',
-                  data:dat,
+                  data: "page="+link,
+                  processData: false,
                   success: function(data){
+                    $('#back').unblock()
                     var text= $('<div/>').html(data).text().replace(new RegExp("\\\\","g"),"\\\\");
                     initNodes(text,particleSystem);
                   }
@@ -239,28 +267,30 @@
 
     var thisNode = node
     var edges = sys.getEdgesTo(node);
-    if(opt){
-      if(opt.data.oldRoot){
-        opt.data.oldRoot=false
-        opt.data.root = true
-      }
-    }
+   // if(opt){
+   //   if(opt.data.oldRoot){
+   //     opt.data.oldRoot=false
+   //     opt.data.root = true
+   //   }
+   // }
     if(edges.length!=0){
       var parent = edges[0].source;
       edges[0].data.color="orange"
-      implode(parent,sys,node);
+      implode(parent,sys,thisNode);
     }
-    implode(node,sys);
+    implode(thisNode,sys);
     node.data.expanded=true;
     for (var i = 0; i < node.data.sections.length; i++){
-      var nodule=sys.addNode(node.data.sections[i].title,{link:false,mass:50,text:node.data.sections[i].title,fixed:false,expanded:false,sections:node.data.sections[i].sections,links:node.data.sections[i].links})
+      var nodule=sys.addNode("__s__"+node.data.sections[i].title,{link:false,mass:50,text:decodeURI(node.data.sections[i].title),fixed:false,expanded:false,sections:node.data.sections[i].sections,links:node.data.sections[i].links})
       sys.addEdge(node,nodule)
     }
-    if(node.data.links && node.data.links.length){
-    for (var i = 0; i < node.data.links.length; i++){
-      var nodule=sys.addNode(node.data.links[i].name,{link:true,mass:50,text:node.data.links[i].name,fixed:false,expanded:false})
-      sys.addEdge(node,nodule,{color:"blue"})
-    }
+    if(node.data.links && node.data.links.length>0){
+      var max = node.data.links.length
+      for (var j = 0; j < max; j++){
+        var nodule=sys.addNode("__l__"+node.data.links[j].name,{link:true,mass:50,text:decodeURI(node.data.links[j].name),url:node.data.links[j].url,fixed:false,expanded:false})
+        sys.addEdge(node,nodule,{color:"blue"})
+        console.log(node.data.links)
+      }
     }
   }
 
@@ -268,6 +298,7 @@
  
     node.data.expanded = false
     var edges = sys.getEdgesFrom(node)
+    console.log(edges)
     for (var i = 0; i < edges.length; i++){
       if(!opt || edges[i].target!=opt){
         implode(edges[i].target,sys)
@@ -286,10 +317,8 @@
   }
 
   startGraph = function(arraystuff,nodeDiv){
-    var sys = arbor.ParticleSystem(500, 100, 0.0,true) // create the system with sensible repulsion/stiffness/friction
-    sys.renderer = Renderer("#viewport","fuuu") // our newly created renderer will have its .init() method called shortly by sys...
-    console.log("fuck")
-    a;sdlkjf;sl
+    sys = arbor.ParticleSystem(500, 100, 0.0,true) // create the system with sensible repulsion/stiffness/friction
+    sys.renderer = Renderer("#viewport",nodeDiv) // our newly created renderer will have its .init() method called shortly by sys...
     initNodes(arraystuff,sys);
   }
   initNodes = function(arraystuff,sys){
@@ -297,25 +326,25 @@
     sys.eachNode(function(node, pt){
 
       if(node){
-        if(!node.data.unkillable){
+       // if(!node.data.unkillable){
            sys.pruneNode(node)
-         } else {
-           oldNode = node
-           oldNode.data.root = false
-           oldNode.data.oldRoot=true
-         }
+       //  } else {
+       //    oldNode = node
+       //    oldNode.data.root = false
+       //    oldNode.data.oldRoot=true
+       //  }
        }
     })    		
     var myobj = JSON.parse(arraystuff)
-
-
+    var title = decodeURI(myobj.title)
     // add some nodes to the graph and watch it go...
-    sys.addNode(myobj.title,{mass:50,fixed:true, text:myobj.title,expanded:false,root:true,sections:myobj.sections,unkillable:true})
-    if(oldNode){
-      sys.addEdge(oldNode,myobj.title)
-    }
+    sys.addNode(title,{mass:50,fixed:true, text:title,expanded:false,root:true,sections:myobj.sections,url:myobj.title,unkillable:true})
+    //if(oldNode){
+    //  sys.addEdge(oldNode,myobj.title)
+   // }
+    rootNode = sys.getNode(title)
     //drawNodes(myobj,sys)
-    expandOnce(sys.getNode(myobj.title),sys)
+    expandOnce(sys.getNode(title),sys)
     // or, equivalently:
     //
     // sys.graft({
@@ -333,4 +362,18 @@
     
   }
 
+  initGraphFromUrl = function(url){
+    $('#back').block();
+    $.ajax({
+                  url: "wiki/fetch",
+                  dataType: 'text',
+                  data: "page="+url,
+                  processData: false,
+                  success: function(data){
+                    $('#back').unblock()
+                    var text= $('<div/>').html(data).text().replace(new RegExp("\\\\","g"),"\\\\");
+                    initNodes(text,sys);
+                  }
+                });
+  }
 })(this.jQuery)

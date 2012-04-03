@@ -109,13 +109,29 @@ end
 class HomeController < ApplicationController
   def index
   end
+
+  def doSearch #this is also an AJAX method
+    require 'net/http'
+    require 'uri'
+    @search = params[:page]
+    Net::HTTP.start('en.wikipedia.org',80) do |http|
+      @xml = (http.get('/w/api.php?action=opensearch&format=json&search='+@search+'&limit=5&namespace=0&suggest&format=xml',"User-Agent" => "Jesse Sharps(MIT, testing random things)").body);
+      logger.info(@xml)
+    end
+    render:xml=>@xml
+  end
   def fetch #this is an AJAX method
+
+
+
+
+
     require 'xml'
     require 'net/http'
+    require 'uri'
     @toParse = params[:page]
-    logger.info @toParse
     Net::HTTP.start( 'en.wikipedia.org', 80 ) do |http|
-      xml=( http.get( '/w/api.php?action=parse&format=xml&page='+@toParse+'&redirects&prop=text', "User-Agent" => "Jesse Sharps (MIT, testing random things)" ).body ) ; 
+      xml=( http.get( '/w/api.php?action=parse&format=xml&page='+URI.escape(@toParse)+'&redirects&prop=text', "User-Agent" => "Jesse Sharps (MIT, testing random things)" ).body ) ; 
       #page level node
       node = WikiNode.new(@toParse,0)
       node.parentTo(node)
@@ -133,7 +149,6 @@ class HomeController < ApplicationController
           if match[0].index("References") == 0
             next
           end
-          logger.info match[0] + " fuck my life"
           section = sections[match[0]]
           if not section
             section="1"
@@ -163,9 +178,9 @@ class HomeController < ApplicationController
         end
       end
     @page = node.to_json.inspect #necessary for some reason
-    @page=@page.gsub("=>",":").gsub("'","\\\\'") #replace shit with shit
+    @page=@page.gsub("=>",":").gsub("'","%27").gsub("\\x","%") #replace shit with shit
+    #logger.info @page
     render:json => @page #return
-    #puts posts
     end
 
   end

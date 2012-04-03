@@ -1,6 +1,7 @@
 Pensieve::Application.routes.draw do
   get "home/index"
   match "wiki/fetch" => "home#fetch", :via => [:GET]
+  match "wiki/doSearch" => "home#doSearch", :via => [:GET]
   resources :wiki
 
   # The priority is based upon order of creation:
