@@ -26,7 +26,9 @@ class WikiNode
   @parent #WikiNode, null
   @title
   @level
+  @url
   def initialize(title,level)
+    @url = "nil"
     @title = title
     @sections = Array.new
     @links = Array.new
@@ -45,6 +47,7 @@ class WikiNode
     {
       'json_class' => self.class.name,
       'title' => @title,
+      'url' => @url,
       'sections' => sections_json,
       'links' => links_json
     }
@@ -56,6 +59,10 @@ class WikiNode
   
   def addLink(link)
     @links << link
+  end
+
+  def urlTo(url)
+    @url = url
   end
 
   def level
@@ -135,6 +142,7 @@ class HomeController < ApplicationController
       #page level node
       node = WikiNode.new(@toParse,0)
       node.parentTo(node)
+      node.urlTo(URI.escape(@toParse))
       currentNode = node
       sections = Hash.new
       #parse the section that gives section/number info i.e. "1.2.1 Section"

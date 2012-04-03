@@ -26,7 +26,9 @@ class WikiNode
   @parent #WikiNode, null
   @title
   @level
+  @url
   def initialize(title,level)
+    @url = "nil"
     @title = title
     @sections = Array.new
     @links = Array.new
@@ -45,6 +47,7 @@ class WikiNode
     {
       'json_class' => self.class.name,
       'title' => @title,
+      'url' => @url,
       'sections' => sections_json,
       'links' => links_json
     }
@@ -56,6 +59,10 @@ class WikiNode
   
   def addLink(link)
     @links << link
+  end
+
+  def urlTo(url)
+    @url = url
   end
 
   def level
@@ -115,7 +122,7 @@ class HomeController < ApplicationController
     require 'uri'
     @search = params[:page]
     Net::HTTP.start('en.wikipedia.org',80) do |http|
-      @xml = (http.get('/w/api.php?action=opensearch&format=json&search=Rocky&limit=5&namespace=0&suggest&format=xml',"User-Agent" => "Jesse Sharps(MIT, testing random things)").body);
+      @xml = (http.get('/w/api.php?action=opensearch&format=json&search='+@search+'&limit=5&namespace=0&suggest&format=xml',"User-Agent" => "Jesse Sharps(MIT, testing random things)").body);
       logger.info(@xml)
     end
     render:xml=>@xml
@@ -135,6 +142,7 @@ class HomeController < ApplicationController
       #page level node
       node = WikiNode.new(@toParse,0)
       node.parentTo(node)
+      
       currentNode = node
       sections = Hash.new
       #parse the section that gives section/number info i.e. "1.2.1 Section"

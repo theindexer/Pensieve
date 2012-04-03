@@ -1,4 +1,5 @@
 <script src="/assets/arbor.js"></script>
+<script src="/assets/jquery-ui-1.8.18.custom.min.js"></script>
 <script>
      $(document).ready(function(){
         var func = function(arg){
@@ -67,6 +68,10 @@
         $("#do-search").button().click(function(){
           $("#search-wikipedia").dialog("open");
         });
+        $("#open-new-tab").button().click(function(){
+          window.open('http://en.wikipedia.org');
+          self.focus();
+        });
         function emptyPath(){
           $('#nodes').empty();
         }
@@ -90,7 +95,7 @@ div.inline
 display: inline-block;
 vertical-align: top;
 background-color:white;
-height:90%;
+height:600px;
 width: 250px;
 overflow-y: scroll;
 border-style:groove;
@@ -128,9 +133,12 @@ label, input { display:block; }
 <button id="do-search">Start new wikipath!</button>
 <br/>
 <div id="back">
+<div>
   <canvas id="viewport" width="800px" height="600"></canvas>
   <div class="inline" id ="nodes">My Nodes<p/><li class="node">hi</li></div>
 </div>
+</div>
+  <button id="open-new-tab">Open in Wikipedia</button>
 <div id="search-wikipedia" title="Start a new Wikipath!">
 	<form>
 	<fieldset>

@@ -3,7 +3,7 @@
 //
 //  A project template for using arbor.js
 //
-
+var globalurl
 (function($){
   var rootNode
   var splitText = function(string) {
@@ -326,39 +326,17 @@
     sys.eachNode(function(node, pt){
 
       if(node){
-       // if(!node.data.unkillable){
-           sys.pruneNode(node)
-       //  } else {
-       //    oldNode = node
-       //    oldNode.data.root = false
-       //    oldNode.data.oldRoot=true
-       //  }
+         sys.pruneNode(node)
        }
     })    		
     var myobj = JSON.parse(arraystuff)
+    globalurl = myobj.url
+    console.log(globalurl+"hiii")
     var title = decodeURI(myobj.title)
     // add some nodes to the graph and watch it go...
     sys.addNode(title,{mass:50,fixed:true, text:title,expanded:false,root:true,sections:myobj.sections,url:myobj.title,unkillable:true})
-    //if(oldNode){
-    //  sys.addEdge(oldNode,myobj.title)
-   // }
     rootNode = sys.getNode(title)
-    //drawNodes(myobj,sys)
     expandOnce(sys.getNode(title),sys)
-    // or, equivalently:
-    //
-    // sys.graft({
-    //   nodes:{
-    //     f:{alone:true, mass:.25}
-    //   }, 
-    //   edges:{
-    //     a:{ b:{},
-    //         c:{},
-    //         d:{},
-    //         e:{}
-    //     }
-    //   }
-    // })
     
   }
 
