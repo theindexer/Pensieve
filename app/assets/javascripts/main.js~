@@ -202,6 +202,7 @@ var globalurl
                   var oldLink = rootNode.data.url
                   $(NodeDiv).prepend("<li class='node' id='"+currentNode+"'>"+rootNode.data.text.replace(new RegExp("_","g")," ")+"</li>");
                   var nodeID = currentNode
+                  $("#"+currentNode).data("url",oldLink)
                   $("#"+currentNode).click(function(e){
                   $('#back').block({message:null})
                   console.log(oldLink+"yay")
@@ -330,7 +331,7 @@ var globalurl
        }
     })    		
     var myobj = JSON.parse(arraystuff)
-    console.log("whhy")
+    globalurl = myobj.url
     console.log(globalurl+"hiii")
     var title = decodeURI(myobj.title)
     // add some nodes to the graph and watch it go...
@@ -341,7 +342,7 @@ var globalurl
   }
 
   initGraphFromUrl = function(url){
-    $('#back').block();
+    $('#back').block({message:null});
     $.ajax({
                   url: "wiki/fetch",
                   dataType: 'text',

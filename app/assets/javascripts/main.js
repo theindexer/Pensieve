@@ -202,6 +202,7 @@ var globalurl
                   var oldLink = rootNode.data.url
                   $(NodeDiv).prepend("<li class='node' id='"+currentNode+"'>"+rootNode.data.text.replace(new RegExp("_","g")," ")+"</li>");
                   var nodeID = currentNode
+                  $("#"+currentNode).data("url",oldLink)
                   $("#"+currentNode).click(function(e){
                   $('#back').block({message:null})
                   console.log(oldLink+"yay")
@@ -214,7 +215,6 @@ var globalurl
                     $('#back').unblock()
                     while ($("#"+nodeID).remove().length!=0){
                       nodeID++
-                      console.log("nope")
                     }
                     var text= $('<div/>').html(data).text().replace(new RegExp("\\\\","g"),"\\\\");
                     initNodes(text,particleSystem);
@@ -341,7 +341,7 @@ var globalurl
   }
 
   initGraphFromUrl = function(url){
-    $('#back').block();
+    $('#back').block({message:null});
     $.ajax({
                   url: "wiki/fetch",
                   dataType: 'text',

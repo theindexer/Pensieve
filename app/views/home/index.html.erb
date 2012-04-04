@@ -72,6 +72,15 @@
           window.open('http://en.wikipedia.org/wiki/'+globalurl);
           self.focus();
         });
+        $("#open-path").button().click(function(){
+          nodechilds = $("#nodes").children()
+          var i
+          for(i = 0; i < nodechilds.length; i++){
+      
+          window.open('http://en.wikipedia.org/wiki/'+$("#"+nodechilds[i].id).data("url"));
+          self.focus();
+          }
+        });
         function emptyPath(){
           $('#nodes').empty();
         }
@@ -139,6 +148,7 @@ label, input { display:block; }
 </div>
 </div>
   <button id="open-new-tab">Open in Wikipedia</button>
+  <button id="open-path">Open path in Wikipedia</button>
 <div id="search-wikipedia" title="Start a new Wikipath!">
 	<form>
 	<fieldset>
