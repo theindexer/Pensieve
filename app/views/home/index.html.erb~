@@ -1,91 +1,3 @@
-<script src="/assets/arbor.js"></script>
-<script src="/assets/jquery-ui-1.8.18.custom.min.js"></script>
-<script>
-     $(document).ready(function(){
-        var func = function(arg){
-          alert("hi");
-        }
-        var currentNode=0
-        $('#viewport').width = $('#back').clientWidth;
-        
-        var dat = {"page":"Wikipedia"}
-        $.ajax({
-          url: "wiki/fetch",
-          dataType: 'text',
-          data:dat,
-          success: function(data){
-            var text= $('<div/\>').html(data).text();
-            startGraph(text.replace("\\","\\\\","g"),"#nodes");
-          }
-        });
-        $("#search-wikipedia").dialog({
-          autoOpen: false,
-	  height: 400,
-	  width: 600,
-	  modal: true,
-	  buttons: {
-	    "Do Search!": function() {
-              var searchData = {"page":$("#query").val().replace(new RegExp(" ","g"),"+")}
-              $("#search-results").empty();
-              $.ajax({
-                url: "wiki/doSearch",
-                dataType: 'xml',
-                data:searchData,
-                success: function(data){
-                  xmlDoc = data
-                  var result=xmlDoc.getElementsByTagName("Item");
-                  if(result.length==0){
-                    $("#search-results").append("No results"); return;
-                  }
-                  var locali
-                  for (i=0; i < result.length; i++){
-                    var localResult = "<button id="+i+"button class='resultbutton'>"+result[i].getElementsByTagName("Text")[0].childNodes[0].nodeValue + "</button><br>";
-                    localResult +=result[i].getElementsByTagName("Description")[0].childNodes[0].nodeValue+"<br>";
-                  $("#search-results").append(localResult);
-                    locali = i
-                  $("#"+locali+"button").button().click(function(){
-                    var url = result[this.id.substr(0,1)].getElementsByTagName("Url")[0].childNodes[0].nodeValue;
-                    url = url.substr(url.indexOf("wiki/")+5)
-                    initGraphFromUrl(url)
-                    $( "#search-wikipedia" ).dialog( "close" );
-                    emptyPath();
-                    });
-
-                  }
-                }
-              });
-					
-	     },
-	     Cancel: function() {
-	      $( this ).dialog( "close" );
-	      }
-           },
-			close: function() {
-				$('#query').val( "" );
-                                $("#search-results").empty();
-			}
-        });
-        $("#do-search").button().click(function(){
-          $("#search-wikipedia").dialog("open");
-        });
-        $("#open-new-tab").button().click(function(){
-          window.open('http://en.wikipedia.org/wiki/'+globalurl);
-          self.focus();
-        });
-        $("#open-path").button().click(function(){
-          nodechilds = $("#nodes").children()
-          var i
-          for(i = nodechilds.length-1; i >=0; i--){
-      
-          window.open('http://en.wikipedia.org/wiki/'+$("#"+nodechilds[i].id).data("url"));
-          self.focus();
-          }
-        });
-        function emptyPath(){
-          $('#nodes').empty();
-        }
-        });
-</script>
 <style type="text/css">
 #back
 {
@@ -144,7 +56,7 @@ label, input { display:block; }
 <div id="back">
 <div>
   <canvas id="viewport" width="800px" height="600"></canvas>
-  <div class="inline" id ="nodes">My Nodes<p/><li class="node">hi</li></div>
+  <div class="inline" id ="nodes"></div>
 </div>
 </div>
   <button id="open-new-tab">Open in Wikipedia</button>

@@ -1,9 +1,16 @@
 Pensieve::Application.routes.draw do
+  resources :user_paths
+
+  resources :paths
+
+  devise_for :users
   get "home/index"
   match "wiki/fetch" => "home#fetch", :via => [:GET]
   match "wiki/doSearch" => "home#doSearch", :via => [:GET]
+  match "paths/addpath" => "paths#ajaxCreate", :via => [:POST]
+  match "profile/:id" => "profile#showProfile", :via => [:GET]
   resources :wiki
-
+  get "test/test"
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

@@ -1,0 +1,12 @@
+<h2>Profile for <%= @user.email %></h2>
+<h3>Paths</h3>
+<% @paths.each do |path|
+path = YAML::load(path.path)
+for elem in path.reverse
+%>
+<a href="http://en.wikipedia.org/wiki/<%= elem["url"] %>"><%=elem["name"]%></a> ->
+ <% end %>
+End
+<br>
+<% end %>
+

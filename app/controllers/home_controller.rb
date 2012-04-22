@@ -128,11 +128,6 @@ class HomeController < ApplicationController
     render:xml=>@xml
   end
   def fetch #this is an AJAX method
-
-
-
-
-
     require 'xml'
     require 'net/http'
     require 'uri'

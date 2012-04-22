@@ -22,6 +22,8 @@ end
 
 gem 'jquery-rails'
 gem 'libxml-ruby', '>= 0.8.3'
+gem 'devise'
+gem 'omniauth-facebook'
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
