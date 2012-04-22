@@ -8,10 +8,6 @@ float: right;
 right:20px;
 display:block;
 }
-a:link {color:black;}
-a:visited {color: red;}
-a:hover {color:blue;}
-a:active {color:yellow;}
 </style>
 <head>
   <title>Pensieve</title>
@@ -22,11 +18,15 @@ a:active {color:yellow;}
 </head>
 <body>
 <h1>PENSIEVE</h1>
+<div class="nav" id="nav">
 <% if user_signed_in? %>
-<div class="nav">Logged in as <%=current_user.email  %>
+Logged in as <%=current_user.email  %>
+<%= link_to "Profile", profile_path(current_user.id) %>
 <%= link_to "Log out", destroy_user_session_path, :method => :delete, :class => 'link' %> 
+<% else %>
+Not logged in - Why don't you <%= link_to "Log in", new_session_path(:user) %> or <%=link_to "Register", new_registration_path(:user)%>
+<%end%>
 </div><br>
-<% end %>
 <%= yield %>
 
 </body>
