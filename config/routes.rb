@@ -8,7 +8,7 @@ Pensieve::Application.routes.draw do
   match "wiki/fetch" => "home#fetch", :via => [:GET]
   match "wiki/doSearch" => "home#doSearch", :via => [:GET]
   match "paths/addpath" => "paths#ajaxCreate", :via => [:POST]
-  match "profile/:id" => "profile#showProfile", :via => [:GET]
+  match "profile/:id" => "profile#showProfile", :via => [:GET], :as => 'profile'
   resources :wiki
   get "test/test"
   # The priority is based upon order of creation:
