@@ -65,7 +65,7 @@
 
 
         $(".fancybutton").button()
-
+        $("#checkbox").button()
         $("#do-search").click(function(){
           $("#search-wikipedia").dialog("open");
         });
@@ -106,6 +106,6 @@
         });
         function colorblindMode(){
           var checkbox = $("#checkbox")
-          colorblind = checkbox.checked
+          colorblind = !colorblind 
         }
 
