@@ -215,7 +215,6 @@ var globalurl
                     $('#back').unblock()
                     while ($("#"+nodeID).remove().length!=0){
                       nodeID++
-                      console.log("nope")
                     }
                     var text= $('<div/>').html(data).text().replace(new RegExp("\\\\","g"),"\\\\");
                     initNodes(text,particleSystem);

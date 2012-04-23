@@ -27,7 +27,14 @@ a {
   &:hover {
     color: #0AF;
     } }
-
+a.titlelink
+{
+color:black;
+padding: 5px;
+border-width: 1px;
+border-style:outset;
+border-color:white;
+}
 div {
   &.field, &.actions {
     margin-bottom: 10px; } }

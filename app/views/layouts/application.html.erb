@@ -17,7 +17,7 @@ display:block;
   <%= csrf_meta_tags %>
 </head>
 <body>
-<h1>PENSIEVE</h1>
+<h1><%= link_to "PENSIEVE", home_index_path, :class => "titlelink" %></h1>
 <div class="nav" id="nav">
 <% if user_signed_in? %>
 Logged in as <%=current_user.email  %>

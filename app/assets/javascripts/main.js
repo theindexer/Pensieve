@@ -3,8 +3,11 @@
 //
 //  A project template for using arbor.js
 //
+var colorblind = false 
 var globalurl
 (function($){
+  var maxLinks = 20
+  var maxSubLinks = 25
   var rootNode
   var splitText = function(string) {
     var charlimit = 14
@@ -81,14 +84,19 @@ var globalurl
           var rootText = new Color(0,0,235)
           var sectColor = new Color(100,0,100)
           var sectText = new Color(155,255,155)
-          ctx.fillStyle = (node.data.root) ? "rgb("+rootColor.string+")" : "rgb("+sectColor.string+")"
+          var moreColor = new Color(100,0,200)
+          ctx.fillStyle = (node.data.root) ? "rgb("+rootColor.string+")" : (node.data.holder) ? "rgb("+moreColor.string+")" : "rgb("+sectColor.string+")"
           if(node.data.link){
             w=30
             ctx.fillStyle = "blue"
           }
+          if(colorblind){
+            ctx.fillStyle = "rgb(0,0,0)"
+          }
           ctx.font = "12pt Arial"
           var metrics = ctx.measureText(node.data.text);
           var width = Math.max(metrics.width,80);
+          if(!colorblind || (colorblind && node.data.link)){
           ctx.fillRect(pt.x-width/2, pt.y-w/2, width,w);
           ctx.beginPath();
           ctx.arc(pt.x-width/2+1,pt.y,w/2,Math.PI/2,3*Math.PI/2,false);
@@ -98,10 +106,46 @@ var globalurl
           ctx.arc(pt.x+width/2-1,pt.y,w/2,Math.PI/2,3*Math.PI/2,true);
           ctx.closePath();
           ctx.fill();
+          } else {
+            if(node.data.root){
+              ctx.fillRect(pt.x-width/2, pt.y-w/2,width,w);
+              ctx.beginPath();
+              ctx.moveTo(pt.x-10,pt.y-w/2+1)
+              ctx.lineTo(pt.x,pt.y-w/2-9)
+              ctx.lineTo(pt.x+10,pt.y-w/2+1)
+              ctx.closePath();
+              ctx.fill();
+              ctx.beginPath();
+              ctx.moveTo(pt.x-10,pt.y+w/2-1)
+              ctx.lineTo(pt.x,pt.y+w/2+9)
+              ctx.lineTo(pt.x+10,pt.y+w/2-1)
+              ctx.closePath();
+              ctx.fill();
+
+            } else {
+              ctx.fillRect(pt.x-width/2,pt.y-w/2,width,w);
+              ctx.beginPath();
+              ctx.moveTo(pt.x-width/2+1,pt.y-10)
+              ctx.lineTo(pt.x-width/2-9,pt.y)
+              ctx.lineTo(pt.x-width/2+1,pt.y+10)
+              ctx.closePath();
+              ctx.fill();
+              ctx.beginPath();
+              ctx.moveTo(pt.x+width/2-1,pt.y-10)
+              ctx.lineTo(pt.x+width/2+9,pt.y)
+              ctx.lineTo(pt.x+width/2-1,pt.y+10)
+              ctx.closePath();
+              ctx.fill();
+
+            }
+          }          
           if(node.data.root){
             ctx.fillStyle = "rgb("+rootText.string+")"
           } else {
             ctx.fillStyle = "rgb(" + sectText.string+")"
+          }
+          if(colorblind){
+            ctx.fillStyle="rgb(255,255,255)"
           }
           ctx.fillText(node.data.text.replace(new RegExp("_","g")," "), pt.x-metrics.width/2, pt.y+5)
         })    			
@@ -207,7 +251,7 @@ var globalurl
                   $('#back').block({message:null})
                   console.log(oldLink+"yay")
                   $.ajax({
-                  url: "wiki/fetch",
+                  url: "/wiki/fetch",
                   dataType: 'text',
                   data: "page="+oldLink,
                   processData: false,
@@ -226,14 +270,14 @@ var globalurl
                   $(e.currentTarget).css("background-color","yellow");
                   });
                   $("#"+currentNode).mouseout(function(e){
-                    $(e.currentTarget).css("background-color","green");
+                    $(e.currentTarget).css("background-color","white");
                   });
                   currentNode++
 
 
                 link = link.replace(new RegExp( " ", "g" ), "_")
                 $.ajax({
-                  url: "wiki/fetch",
+                  url: "/wiki/fetch",
                   dataType: 'text',
                   data: "page="+link,
                   processData: false,
@@ -286,10 +330,31 @@ var globalurl
     }
     if(node.data.links && node.data.links.length>0){
       var max = node.data.links.length
+      var newLinks
       for (var j = 0; j < max; j++){
+       if (j<maxLinks){
         var nodule=sys.addNode("__l__"+node.data.links[j].name,{link:true,mass:50,text:decodeURI(node.data.links[j].name),url:node.data.links[j].url,fixed:false,expanded:false})
         sys.addEdge(node,nodule,{color:"blue"})
         console.log(node.data.links)
+       } else {
+        /*if (j==maxLinks){
+          newLinks = new Array();
+        }
+        newLinks[j-maxLinks] = node.data.links[j]
+        if(j==max-1){
+          var nodule = sys.addNode("__s__"+"more"+node.data.text,{link:false,holder:true,mass:50,text:"More Links",fixed:false,expanded:false,sections:new Array(),links:newLinks})
+          sys.addEdge(node,nodule)
+
+        }*/
+        if (j % maxLinks == 0){
+          newLinks = new Array();
+        }
+        newLinks[j%maxLinks] = node.data.links[j]
+        if (j == max-1 || j % (maxLinks-1) ==0) {
+          var nodule = sys.addNode("__s__"+"more"+j,{link:false,holder:true,mass:50,text:"More Links "+Math.floor((j+maxSubLinks-maxLinks)/maxSubLinks),fixed:false,expanded:false,sections:new Array(),links:newLinks})
+          sys.addEdge(node,nodule)
+        }
+       }
       }
     }
   }
@@ -334,7 +399,7 @@ var globalurl
     console.log(globalurl+"hiii")
     var title = decodeURI(myobj.title)
     // add some nodes to the graph and watch it go...
-    sys.addNode(title,{mass:50,fixed:true, text:title,expanded:false,root:true,sections:myobj.sections,url:myobj.title,unkillable:true})
+    sys.addNode(title,{mass:50,fixed:true, text:title,expanded:false,root:true,sections:myobj.sections,links:myobj.links,url:myobj.title,unkillable:true})
     rootNode = sys.getNode(title)
     expandOnce(sys.getNode(title),sys)
     
@@ -343,7 +408,7 @@ var globalurl
   initGraphFromUrl = function(url){
     $('#back').block({message:null});
     $.ajax({
-                  url: "wiki/fetch",
+                  url: "/wiki/fetch",
                   dataType: 'text',
                   data: "page="+url,
                   processData: false,

@@ -50,9 +50,17 @@ label, input { display:block; }
 		div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
 		.ui-dialog .ui-state-error { padding: .3em; }
 		.validateTips { border: 1px solid transparent; padding: 0.3em; }
+input#checkbox
+{
+display:inline;
+}
 </style>
-
 <button id="do-search" class="fancybutton">Start new wikipath!</button>
+
+
+<input type="checkbox" id="checkbox" name="checkity" onchange="colorblindMode()"/>
+<label for="checkbox">Colorblind Mode</label>
+
 <br/>
 <div id="back">
 <div>

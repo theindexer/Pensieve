@@ -7,7 +7,7 @@
         
         var dat = {"page":"Wikipedia"}
         $.ajax({
-          url: "wiki/fetch",
+          url: "/wiki/fetch",
           dataType: 'text',
           data:dat,
           success: function(data){
@@ -25,7 +25,7 @@
               var searchData = {"page":$("#query").val().replace(new RegExp(" ","g"),"+")}
               $("#search-results").empty();
               $.ajax({
-                url: "wiki/doSearch",
+                url: "/wiki/doSearch",
                 dataType: 'xml',
                 data:searchData,
                 success: function(data){
@@ -65,7 +65,7 @@
 
 
         $(".fancybutton").button()
-
+        $("#checkbox").button()
         $("#do-search").click(function(){
           $("#search-wikipedia").dialog("open");
         });
@@ -104,3 +104,8 @@
           $('#nodes').empty();
         }
         });
+        function colorblindMode(){
+          var checkbox = $("#checkbox")
+          colorblind = !colorblind 
+        }
+
