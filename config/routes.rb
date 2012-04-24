@@ -5,6 +5,7 @@ Pensieve::Application.routes.draw do
 
   devise_for :users
   get "home/index"
+  get "home/tutorial"
   match "wiki/fetch" => "home#fetch", :via => [:GET]
   match "wiki/doSearch" => "home#doSearch", :via => [:GET]
   match "paths/addpath" => "paths#ajaxCreate", :via => [:POST]
