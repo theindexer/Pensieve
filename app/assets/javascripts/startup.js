@@ -1,27 +1,5 @@
      $(document).ready(function(){
-        var func = function(arg){
-          alert("hi");
-        }
-        var currentNode=0
-        $('#viewport').width = $('#back').clientWidth;
-        
-        var dat = {"page":"Wikipedia"}
-        $.ajax({
-          url: "/wiki/fetch",
-          dataType: 'text',
-          data:dat,
-          success: function(data){
-            var text= $('<div/\>').html(data).text();
-            startGraph(text.replace("\\","\\\\","g"),"#nodes");
-          }
-        });
-        $("#search-wikipedia").dialog({
-          autoOpen: false,
-	  height: 400,
-	  width: 600,
-	  modal: true,
-	  buttons: {
-	    "Do Search!": function() {
+        function doSearch() {
               var searchData = {"page":$("#query").val().replace(new RegExp(" ","g"),"+")}
               $("#search-results").empty();
               $.ajax({
@@ -52,7 +30,33 @@
                 }
               });
 					
-	     },
+	     }
+        var currentNode=0
+        $('#viewport').width = $('#back').clientWidth;
+        
+        var dat = {"page":"Wikipedia"}
+        $.ajax({
+          url: "/wiki/fetch",
+          dataType: 'text',
+          data:dat,
+          success: function(data){
+            var text= $('<div/\>').html(data).text();
+            startGraph(text.replace("\\","\\\\","g"),"#nodes");
+          }
+        });
+        $('#search-wikipedia').keypress(function (e) {
+  if (e.which == 13) {
+    doSearch()
+    return false
+  }
+});
+        $("#search-wikipedia").dialog({
+          autoOpen: false,
+	  height: 400,
+	  width: 600,
+	  modal: true,
+	  buttons: {
+	    "Do search!": function(){ doSearch(); },
 	     Cancel: function() {
 	      $( this ).dialog( "close" );
 	      }

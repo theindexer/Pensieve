@@ -173,7 +173,7 @@ class HomeController < ApplicationController
           end
           currentNode = newnode
         else #this is a link
-          if match[1].index("Wikipedia:") == 0
+          if match[1].index(Regexp.new("File:|Wikipedia:|Talk:")) == 0
             next #ignore meta internal links
           end
           link = Link.new(match[2],match[1])

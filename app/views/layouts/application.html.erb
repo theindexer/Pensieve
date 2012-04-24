@@ -8,6 +8,15 @@ float: right;
 right:20px;
 display:block;
 }
+h1.penlink
+{
+display:inline;
+}
+h3.beta
+{
+color:red;
+display:inline;
+}
 </style>
 <head>
   <title>Pensieve</title>
@@ -17,7 +26,9 @@ display:block;
   <%= csrf_meta_tags %>
 </head>
 <body>
-<h1><%= link_to "PENSIEVE", home_index_path, :class => "titlelink" %></h1>
+<h1 class ="penlink"><%= link_to "PENSIEVE", home_index_path, :class => "titlelink" %></h1>
+<h3 class="beta">Pensieve is still in Beta, so don't be surprised by errors and dead ends!</h3>
+<br>
 <div class="nav" id="nav">
 <% if user_signed_in? %>
 Logged in as <%=current_user.email  %>
