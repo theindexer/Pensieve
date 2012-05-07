@@ -1,14 +1,3 @@
 Hello world<br>
-<%
-%>
-<%=YAML::load(Path.find(7).path)[0]["url"] %>
-<% user = current_user
-paths=Path.where(:user_id => user)
-for mypath in paths %>
-  <%= YAML::load(mypath.path)%><br>
-<% end %>
-<script type="text/javascript">
- data = [{"name":"wikipedia","url":"Wiskipedia"},{"name":"x","url":"y"}]
 
-</script>
-
+<%=session[:current_user] %>

@@ -1,18 +1,10 @@
-<script src="/assets/arbor.js"></script>
 <style type="text/css">
 #back
 {
-position:relative;
 height: 600px;
 padding: 0.5em;
-}
-#viewport
-{
-position:absolute;
-top:0px;
-z-index:1;
-width:100%;
-height: 600px
+background-color:white;
+overflow: hidden;
 }
 li
 {
@@ -57,38 +49,18 @@ label, input { display:block; }
 		div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
 		.ui-dialog .ui-state-error { padding: .3em; }
 		.validateTips { border: 1px solid transparent; padding: 0.3em; }
-input#checkbox
-{
-display:inline;
-}
-#history
-{
-overflow:auto;
-z-index:10;
-width:500px;
-height:30px;
-position:relative;
-}
 </style>
-<h2><%=link_to "What is Pensieve?", home_tutorial_path %></h2>
-<button id="do-search" class="fancybutton">Start new wikipath!</button>
 
-
-<input type="checkbox" id="checkbox" name="checkity" onchange="colorblindMode()"/>
-<label for="checkbox">Colorblind Mode</label>
-  <button id="open-new-tab" class="fancybutton">Open in Wikipedia</button>
-  <button id="open-path"class="fancybutton">Open path in Wikipedia</button>
-<% if user_signed_in? %>
-  <button id="save-path" class="fancybutton">Save wikipath</button>
-<% end %>
-
+<button id="do-search">Start new wikipath!</button>
 <br/>
 <div id="back">
-  <div id="history"><select id="history_select"><option value="Wikipedia">Wikipedia</option></select>
-  </div>
-  <canvas id="viewport"></canvas>
 <div>
-<!--  <div class="inline" id ="nodes"></div>-->
+  <canvas id="viewport" width="800px" height="600"></canvas>
+  <div class="inline" id ="nodes"></div>
+</div>
+</div>
+  <button id="open-new-tab">Open in Wikipedia</button>
+  <button id="open-path">Open path in Wikipedia</button>
 <div id="search-wikipedia" title="Start a new Wikipath!">
 	<form>
 	<fieldset>

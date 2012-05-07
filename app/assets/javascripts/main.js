@@ -5,12 +5,19 @@
 //
 var colorblind = false 
 var globalurl
+var history = new Array();
 (function($){
   var maxLinks = 20
   var maxSubLinks = 25
   var rootNode
   var splitText = function(string) {
     var charlimit = 14
+  }
+  var updateHistory = function() {
+    var canvas = $("#viewport")
+    var p = arbor.Point(40,40);
+    p = sys.fromScreen(p)
+    sys.addNode("historynode",{link:true,x:p.x,y:p.y,mass:50000,fixed:true,superfixed:true,mass:1.0,text:history[history.length-1]["name"],url:history[history.length-1]["url"]})
   }
   var Renderer = function(canvas, nodediv){
     var canvas = $(canvas).get(0)
@@ -20,6 +27,14 @@ var globalurl
     var currentNode = 0
     var canvasOffset = arbor.Point(0,0)
     var prevPoint;
+// resize the canvas to fill browser window dynamically
+        window.addEventListener('resize', resizeCanvas, false);
+        
+        function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = 600;
+                particleSystem.screenSize(canvas.width, canvas.height)
+         }
     var that = {
       init:function(system){
         //
@@ -33,6 +48,7 @@ var globalurl
         // inform the system of the screen dimensions so it can map coords for us.
         // if the canvas is ever resized, screenSize should be called again with
         // the new dimensions
+        resizeCanvas()
         particleSystem.screenSize(canvas.width, canvas.height) 
         particleSystem.screenPadding(80) // leave an extra 80px of whitespace per side
         
@@ -167,6 +183,9 @@ var globalurl
             if(dragged.distance > 50){
               dragged = null
             }
+            if (dragged.node.data.superfixed){
+              dragged=null
+            }
             if (dragged && dragged.node !== null){
               // while we're dragging, don't let physics move the node
               dragged.node.fixed = true
@@ -229,7 +248,6 @@ var globalurl
             $(canvas).unbind('mousemove', handler.dragged)
             $(window).unbind('mouseup', handler.dropped)
             _mouseP = null
-            console.log("FUCK THIS SHIT");
             if((end-start) < 200){
               if(!myNode.data.link){
                 if(!myNode.data.expanded){
@@ -244,12 +262,12 @@ var globalurl
                 $('#back').block({message:null})
                 var link = myNode.data.url
                   var oldLink = rootNode.data.url
-                  $(NodeDiv).prepend("<li class='node' id='"+currentNode+"'>"+rootNode.data.text.replace(new RegExp("_","g")," ")+"</li>");
+                  //$(NodeDiv).prepend("<li class='node' id='"+currentNode+"'>"+rootNode.data.text.replace(new RegExp("_","g")," ")+"</li>");
                   var nodeID = currentNode
+                  addToHistory({"name":rootNode.data.text.replace(new RegExp("_","g")," "),"url":oldLink})
                   $("#"+currentNode).data("url",oldLink)
                   $("#"+currentNode).click(function(e){
                   $('#back').block({message:null})
-                  console.log(oldLink+"yay")
                   $.ajax({
                   url: "/wiki/fetch",
                   dataType: 'text',
@@ -330,12 +348,11 @@ var globalurl
     }
     if(node.data.links && node.data.links.length>0){
       var max = node.data.links.length
-      var newLinks
+      var newLinks=new Array();
       for (var j = 0; j < max; j++){
        if (j<maxLinks){
         var nodule=sys.addNode("__l__"+node.data.links[j].name,{link:true,mass:50,text:decodeURI(node.data.links[j].name),url:node.data.links[j].url,fixed:false,expanded:false})
         sys.addEdge(node,nodule,{color:"blue"})
-        console.log(node.data.links)
        } else {
         /*if (j==maxLinks){
           newLinks = new Array();
@@ -346,12 +363,9 @@ var globalurl
           sys.addEdge(node,nodule)
 
         }*/
-        if (j % maxLinks == 0){
-          newLinks = new Array();
-        }
-        newLinks[j%maxLinks] = node.data.links[j]
-        if (j == max-1 || j % (maxLinks-1) ==0) {
-          var nodule = sys.addNode("__s__"+"more"+j,{link:false,holder:true,mass:50,text:"More Links "+Math.floor((j+maxSubLinks-maxLinks)/maxSubLinks),fixed:false,expanded:false,sections:new Array(),links:newLinks})
+        newLinks[j-maxLinks] = node.data.links[j]
+        if (j == max-1) {
+          var nodule = sys.addNode("__s__"+"more"+j,{link:false,holder:true,mass:50,text:"More Links",fixed:false,expanded:false,sections:new Array(),links:newLinks})
           sys.addEdge(node,nodule)
         }
        }
@@ -363,7 +377,6 @@ var globalurl
  
     node.data.expanded = false
     var edges = sys.getEdgesFrom(node)
-    console.log(edges)
     for (var i = 0; i < edges.length; i++){
       if(!opt || edges[i].target!=opt){
         implode(edges[i].target,sys)
@@ -382,7 +395,7 @@ var globalurl
   }
 
   startGraph = function(arraystuff,nodeDiv){
-    sys = arbor.ParticleSystem(500, 100, 0.0,true) // create the system with sensible repulsion/stiffness/friction
+    sys = arbor.ParticleSystem(500, 100, .5,true) // create the system with sensible repulsion/stiffness/friction
     sys.renderer = Renderer("#viewport",nodeDiv) // our newly created renderer will have its .init() method called shortly by sys...
     initNodes(arraystuff,sys);
   }
@@ -396,7 +409,6 @@ var globalurl
     })    		
     var myobj = JSON.parse(arraystuff)
     globalurl = myobj.url
-    console.log(globalurl+"hiii")
     var title = decodeURI(myobj.title)
     // add some nodes to the graph and watch it go...
     sys.addNode(title,{mass:50,fixed:true, text:title,expanded:false,root:true,sections:myobj.sections,links:myobj.links,url:myobj.title,unkillable:true})

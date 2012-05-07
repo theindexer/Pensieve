@@ -112,4 +112,19 @@
           var checkbox = $("#checkbox")
           colorblind = !colorblind 
         }
-
+        function addToHistory(item) {/*
+          var canvas = $("#history_canvas").get(0)
+          var ctx = canvas.getContext("2d")
+          history.push(item)
+          canvas.height = history.length*30
+          ctx.fillStyle = "white"
+          ctx.fillRect(0,0, canvas.width, canvas.height)
+          ctx.fillStyle = "black"
+          for (var i=history.length-1; i >=0; i--){
+            ctx.font = "12pt Arial"
+            ctx.fillText(history[i]["name"],0,15+((-i+history.length-1)*30))
+          }*/
+          history.push(item)
+          var selecter = $("#history_select")
+          selecter.prepend("<option value="+item["url"]+">"+item["name"]+"</option>")
+        }

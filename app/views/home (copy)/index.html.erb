@@ -2,17 +2,10 @@
 <style type="text/css">
 #back
 {
-position:relative;
 height: 600px;
 padding: 0.5em;
-}
-#viewport
-{
-position:absolute;
-top:0px;
-z-index:1;
-width:100%;
-height: 600px
+background-color:white;
+overflow: hidden;
 }
 li
 {
@@ -61,14 +54,6 @@ input#checkbox
 {
 display:inline;
 }
-#history
-{
-overflow:auto;
-z-index:10;
-width:500px;
-height:30px;
-position:relative;
-}
 </style>
 <h2><%=link_to "What is Pensieve?", home_tutorial_path %></h2>
 <button id="do-search" class="fancybutton">Start new wikipath!</button>
@@ -76,19 +61,19 @@ position:relative;
 
 <input type="checkbox" id="checkbox" name="checkity" onchange="colorblindMode()"/>
 <label for="checkbox">Colorblind Mode</label>
+
+<br/>
+<div id="back">
+<div>
+  <canvas id="viewport" width="800px" height="600"></canvas>
+  <div class="inline" id ="nodes"></div>
+</div>
+</div>
   <button id="open-new-tab" class="fancybutton">Open in Wikipedia</button>
   <button id="open-path"class="fancybutton">Open path in Wikipedia</button>
 <% if user_signed_in? %>
   <button id="save-path" class="fancybutton">Save wikipath</button>
 <% end %>
-
-<br/>
-<div id="back">
-  <div id="history"><select id="history_select"><option value="Wikipedia">Wikipedia</option></select>
-  </div>
-  <canvas id="viewport"></canvas>
-<div>
-<!--  <div class="inline" id ="nodes"></div>-->
 <div id="search-wikipedia" title="Start a new Wikipath!">
 	<form>
 	<fieldset>
