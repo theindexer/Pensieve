@@ -67,6 +67,7 @@ GEM
     mime-types (1.17.2)
     multi_json (1.1.0)
     multipart-post (1.1.5)
+    mysql2 (0.2.18)
     oauth2 (0.5.2)
       faraday (~> 0.7)
       multi_json (~> 1.0)
@@ -135,6 +136,7 @@ DEPENDENCIES
   devise
   jquery-rails
   libxml-ruby (>= 0.8.3)
+  mysql2 (< 0.3)
   omniauth-facebook
   pg
   rails (= 3.2.1)

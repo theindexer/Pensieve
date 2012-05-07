@@ -8,6 +8,33 @@ float: right;
 right:20px;
 display:block;
 }
+div.topbar {
+    position:fixed;
+    height: 55px;
+    background-color:#0066FF;
+    width:100%;
+    z-index:500;
+}
+div.bottom {
+    height:2px;
+    width:100%;
+    background-color:#000099;
+}
+
+li {
+    padding: 0px 10px 0px 10px;
+    margin: 0px 0px 50px 0px;
+    list-style: none;
+    display: inline;
+    font-weight: bold;
+    font-family: "helvetica";
+    width:50px;
+}
+.top {
+    font-size: 1.3em;
+    color: #fff;
+}
+
 h1.penlink
 {
 display:inline;
@@ -19,15 +46,27 @@ display:inline;
 }
 </style>
 <head>
-  <title>Pensieve</title>
+    <div class="topbar">
+        <ul id="nav">
+            <li class="top"><%= link_to "Pensieve", home_index_path, :class => 'nothing' %></li>
+            <% if user_signed_in? %>
+                <li><%= link_to "Profile", profile_path(current_user.id) %></li> 
+                <li><%= link_to "Log out", destroy_user_session_path, :method => :delete, :class => 'link' %></li>
+            <% else %>
+                <li><%= link_to "Log in", new_session_path(:user) %></li>
+                <li><%= link_to "Register", new_registration_path(:user) %></li>
+            <% end %>
+            <li><%= link_to "About Pensieve", home_tutorial_path %></li>       
+        </ul>
+    </div>
+  
+    <title>Pensieve</title>
 
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-<h1 class ="penlink"><%= link_to "PENSIEVE", home_index_path, :class => "titlelink" %></h1>
-<h3 class="beta">Pensieve is still in Beta, so don't be surprised by errors and dead ends!</h3>
 <br>
 <div class="nav" id="nav">
 <% if user_signed_in? %>

@@ -126,5 +126,5 @@
           }*/
           history.push(item)
           var selecter = $("#history_select")
-          selecter.prepend("<option value="+item["url"]+">"+item["name"]+"</option>")
+          selecter.prepend("<option selected='true' value="+item["url"]+">"+item["name"]+"</option>")
         }

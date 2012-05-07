@@ -1,3 +1,4 @@
 Hello world<br>
-
-<%=session[:current_user] %>
+<% cache do %>
+<%=Pagerank.get_stuff %>
+<% end %>

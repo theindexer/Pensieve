@@ -53,3 +53,13 @@ production:
   pool: 5
   username: pensieve
   password:
+
+triplet:
+  adapter: mysql2
+  encoding: utf8
+  database: pageviews
+  pool: 5
+  username: jessesharps
+  password: jesse
+  host: triple-t.mit.edu
+  port: 315

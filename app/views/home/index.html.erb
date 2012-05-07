@@ -14,23 +14,6 @@ z-index:1;
 width:100%;
 height: 600px
 }
-li
-{
-list-style-type:none;
-text-align:center
-}
-div.inline
-{
-display: inline-block;
-vertical-align: top;
-background-color:white;
-height:600px;
-width: 250px;
-overflow-y: scroll;
-border-style:groove;
-border-width:2px;
-border-color:gray;
-}
 .search-wikipedia
 {
 background:white;
@@ -70,8 +53,7 @@ height:30px;
 position:relative;
 }
 </style>
-<h2><%=link_to "What is Pensieve?", home_tutorial_path %></h2>
-<button id="do-search" class="fancybutton">Start new wikipath!</button>
+<button id="do-search" class="fancybutton">Search Wikipedia!</button>
 
 
 <input type="checkbox" id="checkbox" name="checkity" onchange="colorblindMode()"/>
@@ -89,7 +71,7 @@ position:relative;
   <canvas id="viewport"></canvas>
 <div>
 <!--  <div class="inline" id ="nodes"></div>-->
-<div id="search-wikipedia" title="Start a new Wikipath!">
+<div id="search-wikipedia" title="Search Wikipedia">
 	<form>
 	<fieldset>
 		<label for="query">Search Topic</label>

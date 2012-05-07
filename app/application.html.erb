@@ -30,7 +30,7 @@ li {
     font-family: "helvetica";
     width:50px;
 }
-a.top {
+.top {
     font-size: 1.3em;
     color: #fff;
 }
@@ -48,7 +48,7 @@ display:inline;
 <head>
     <div class="topbar">
         <ul id="nav">
-            <li class="top"><%= link_to "Pensieve", home_index_path, :class => 'nothing' %></li>
+            <li class="top"><%= link_to "Pensieve", home_index_path, :class => "titlelink" %></li>
             <% if user_signed_in? %>
                 <li><%= link_to "Profile", profile_path(current_user.id) %></li> 
                 <li><%= link_to "Log out", destroy_user_session_path, :method => :delete, :class => 'link' %></li>
