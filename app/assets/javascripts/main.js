@@ -97,15 +97,39 @@ window.history_location = -1;
           // node: {mass:#, p:{x,y}, name:"", data:{}}
           // pt:   {x:#, y:#}  node position in screen coords
           var w = 30
-          var rootColor = new Color(255,255,20)
+          var rootColor = new Color(255,200,0)
           var rootText = new Color(0,0,235)
-          var sectColor = new Color(100,0,100)
+          var sectColor = new Color(60,0,60)
           var sectText = new Color(155,255,155)
-          var moreColor = new Color(100,0,200)
-          ctx.fillStyle = (node.data.root) ? "rgb("+rootColor.string+")" : (node.data.holder) ? "rgb("+moreColor.string+")" : "rgb("+sectColor.string+")"
+          var moreColor = new Color(80,0,150)
+          var lineargrad = ctx.createLinearGradient(pt.x,pt.y-w/2,pt.x,pt.y+w/2)
+          if (node.data.root){
+            lineargrad.addColorStop(0,"rgb("+rootColor.string+")")
+            lineargrad.addColorStop(.3,'rgb(255,255,60)')
+            lineargrad.addColorStop(.6,'rgb(255,255,60)')
+            lineargrad.addColorStop(1,"rgb("+rootColor.string+")")
+            ctx.fillStyle = lineargrad
+          } else if (node.data.holder){
+            lineargrad.addColorStop(0,"rgb("+moreColor.string+")")
+            lineargrad.addColorStop(.3,'rgb(100,10,200)')
+            lineargrad.addColorStop(.6,'rgb(100,10,200)')
+            lineargrad.addColorStop(1,"rgb("+moreColor.string+")")
+            ctx.fillStyle = lineargrad
+          } else if (!node.data.link){
+            lineargrad.addColorStop(0,"rgb("+sectColor.string+")")
+            lineargrad.addColorStop(.3,'rgb(110,0,100)')
+            lineargrad.addColorStop(.6,'rgb(110,0,100)')
+            lineargrad.addColorStop(1,"rgb("+sectColor.string+")")
+            ctx.fillStyle = lineargrad
+          }
           if(node.data.link){
             w=30
-            ctx.fillStyle = "blue"
+            lineargrad.addColorStop(0,"rgb(0,0,180)")
+            lineargrad.addColorStop(.3,'rgb(0,0,255)')
+            lineargrad.addColorStop(.6,'rgb(0,0,255)')
+            lineargrad.addColorStop(1,"rgb(0,0,180)")
+            ctx.fillStyle = lineargrad
+
           }
           if(colorblind){
             ctx.fillStyle = "rgb(0,0,0)"
@@ -123,6 +147,17 @@ window.history_location = -1;
           ctx.arc(pt.x+width/2-1,pt.y,w/2,Math.PI/2,3*Math.PI/2,true);
           ctx.closePath();
           ctx.fill();
+          ctx.lineWidth=2;
+          ctx.strokeStyle="black";
+          ctx.beginPath();
+          ctx.arc(pt.x-width/2+1,pt.y,w/2,Math.PI/2,3*Math.PI/2,false);
+          ctx.moveTo(pt.x-width/2,pt.y-w/2)
+          ctx.lineTo(pt.x+width/2,pt.y-w/2)
+          ctx.moveTo(pt.x+width/2,pt.y+w/2)
+          ctx.lineTo(pt.x-width/2,pt.y+w/2)
+          ctx.arc(pt.x+width/2-1,pt.y,w/2,Math.PI/2,3*Math.PI/2,true);
+
+          ctx.stroke();
           } else {
             if(node.data.root){
               ctx.fillRect(pt.x-width/2, pt.y-w/2,width,w);
