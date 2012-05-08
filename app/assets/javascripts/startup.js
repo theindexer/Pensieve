@@ -1,5 +1,5 @@
      $(document).ready(function(){
-       $('[id!="#down"]').click(function(){
+       $('[id!="down"]').click(function(){
          $("#history_scroller").hide('fast')
        });
        $("#backwards").click(function(){
