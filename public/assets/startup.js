@@ -1,4 +1,7 @@
      $(document).ready(function(){
+       $('[id!="#down"]').click(function(){
+         $("#history_scroller").hide('fast')
+       });
        $("#backwards").click(function(){
          if(window.history_location-1 >=0 && window.history_location-1 < history.length){
            curPlace = window.history_location-1
@@ -16,18 +19,17 @@
            window.history_location+=1
          }
        });
-       $("#down").click(function(){
+       $("#down").click(function(event){
+         event.stopPropagation();
          var hist = $("#history_scroller")
          hist[0].innerHTML="";
          for (var i=0; i < history.length; i++){
            item = "<a class='faux-link' target='_blank' href='http://en.wikipedia.org/wiki/"+history[i]["url"]+"'>Open in new tab</a>"
-           item += "<span class='history-span'><a class='history-span' href='javascript:initGraphFromUrl(\""+history[i]["url"]+"\")'>"+history[i]["name"]+"</a></span><br>"
+           item += "<span class='history-span'><a class='history-span' href='javascript:openFromHistory(\""+history[i]["url"]+"\","+i+")'>"+history[i]["name"]+"</a></span><br>"
            hist.prepend(item)
          }
          $("#history_scroller").toggle('fast')
        });
-
-
 
         function doSearch() {
               var searchData = {"page":$("#query").val().replace(new RegExp(" ","g"),"+")}
@@ -121,13 +123,8 @@
           }
         });
         $("#save-path").click(function(){
-          nodechilds = $("#nodes").children()
-          var data = []
-          var i
-          for(i = 0; i < nodechilds.length; i++){
-            var nodle = $("#"+nodechilds[i].id)
-            data.push({"name":nodle.text(),"url":nodle.data("url")})
-          }
+          var data = history.slice(0)
+          data.reverse() 
           $.ajax({
           type: "POST", 
           url: "/paths/addpath", 
@@ -146,6 +143,13 @@
           var checkbox = $("#checkbox")
           colorblind = !colorblind 
         }
+
+        function openFromHistory(url,newval){
+         $("#history_scroller").toggle()
+         initGraphFromUrl(url)
+         history_location=newval
+       }
+
         function addToHistory(item) {/*
           var canvas = $("#history_canvas").get(0)
           var ctx = canvas.getContext("2d")
