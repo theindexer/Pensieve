@@ -48,9 +48,26 @@ display:inline;
 {
 overflow:auto;
 z-index:10;
-width:500px;
-height:30px;
+width:200px;
 position:relative;
+}
+#history_scroller
+{
+z-index:10;
+position:relative;
+background: rgba(255,255,255,.7);
+display:none;
+width:500px;
+}
+.clickable
+{
+opacity:0.5;
+filter:alpha(opacity=50);
+}
+.clickable:hover
+{
+opacity:1.0;
+filter:alpha(opacity=100);
 }
 </style>
 <button id="do-search" class="fancybutton">Search Wikipedia!</button>
@@ -66,8 +83,13 @@ position:relative;
 
 <br/>
 <div id="back">
-  <div id="history"><select id="history_select"><option value="Wikipedia">Wikipedia</option></select>
+  <div id="history">
+  <!--<select id="history_select"><option value="Wikipedia">Wikipedia</option></select>-->
+  <img id="backwards" class="clickable" src="/assets/arrow_left.png" height="64" width="64"/>
+  <img id="forwards" class="clickable" src="/assets/arrow_right.png" height="64" width="64" />
+  <img id="down" class="clickable" src="/assets/arrow_down.png" height="32" width="32" />
   </div>
+  <div id="history_scroller">Hi<br>Hi<br>Hi</div>
   <canvas id="viewport"></canvas>
 <div>
 <!--  <div class="inline" id ="nodes"></div>-->

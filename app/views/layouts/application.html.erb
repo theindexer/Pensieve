@@ -21,19 +21,7 @@ div.bottom {
     background-color:#000099;
 }
 
-li {
-    padding: 0px 10px 0px 10px;
-    margin: 0px 0px 50px 0px;
-    list-style: none;
-    display: inline;
-    font-weight: bold;
-    font-family: "helvetica";
-    width:50px;
-}
-.top {
-    font-size: 1.3em;
-    color: #fff;
-}
+
 
 h1.penlink
 {
@@ -48,7 +36,7 @@ display:inline;
 <head>
     <div class="topbar">
         <ul id="nav">
-            <li class="top"><%= link_to "Pensieve", home_index_path, :class => 'nothing' %></li>
+            <li class="top"><%= link_to "Pensieve", home_index_path, :class => "top" %></li>
             <% if user_signed_in? %>
                 <li><%= link_to "Profile", profile_path(current_user.id) %></li> 
                 <li><%= link_to "Log out", destroy_user_session_path, :method => :delete, :class => 'link' %></li>
@@ -65,16 +53,31 @@ display:inline;
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
+  <style>
+li {
+    padding: 0px 10px 0px 10px;
+    margin: 0px 0px 50px 0px;
+    list-style: none;
+    display: inline;
+    font-weight: bold;
+    font-family: "helvetica";
+    font-size:20px;
+    width:50px;
+}
+a.top {
+    font-size: 1.3em;
+    color: #fff;
+}
+a.nav {
+
+}
+</style>
 </head>
 <body>
-<br>
+<br><br><br><br>
 <div class="nav" id="nav">
 <% if user_signed_in? %>
 Logged in as <%=current_user.email  %>
-<%= link_to "Profile", profile_path(current_user.id) %>
-<%= link_to "Log out", destroy_user_session_path, :method => :delete, :class => 'link' %> 
-<% else %>
-Not logged in - Why don't you <%= link_to "Log in", new_session_path(:user) %> or <%=link_to "Register", new_registration_path(:user)%>
 <%end%>
 </div><br>
 <%= yield %>

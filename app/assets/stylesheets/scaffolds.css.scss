@@ -23,7 +23,7 @@ a {
     color: #00F;
   }
   &:visited {
-    color: #005; }
+    color: #00A; }
   &:hover {
     color: #0AF;
     } }
@@ -38,6 +38,21 @@ border-color:white;
 a.nothing
 {
 color:inherit;
+font-weight: inherit;
+font-family: inherit;
+font-size: 1.3em;
+}
+a.faux-link
+{
+font-weight:bold;
+font-size: 1.1em;
+}
+.history-span
+{
+font-weight:bold;
+font-size: 1.1em;
+margin-left: 20px;
+color:#00f;
 }
 div {
   &.field, &.actions {

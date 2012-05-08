@@ -6,6 +6,7 @@
 var colorblind = false 
 var globalurl
 var history = new Array();
+window.history_location = -1;
 (function($){
   var maxLinks = 20
   var maxSubLinks = 25
@@ -259,42 +260,12 @@ var history = new Array();
                   }
                 }
               } else {
-                $('#back').block({message:null})
                 var link = myNode.data.url
+                var name = myNode.data.text
                   var oldLink = rootNode.data.url
                   //$(NodeDiv).prepend("<li class='node' id='"+currentNode+"'>"+rootNode.data.text.replace(new RegExp("_","g")," ")+"</li>");
-                  var nodeID = currentNode
-                  addToHistory({"name":rootNode.data.text.replace(new RegExp("_","g")," "),"url":oldLink})
-                  $("#"+currentNode).data("url",oldLink)
-                  $("#"+currentNode).click(function(e){
-                  $('#back').block({message:null})
-                  $.ajax({
-                  url: "/wiki/fetch",
-                  dataType: 'text',
-                  data: "page="+oldLink,
-                  processData: false,
-                  success: function(data){
-                    $('#back').unblock()
-                    while ($("#"+nodeID).remove().length!=0){
-                      nodeID++
-                    }
-                    var text= $('<div/>').html(data).text().replace(new RegExp("\\\\","g"),"\\\\");
-                    initNodes(text,particleSystem);
-                  }
-                });
-
-                  });
-                  $("#"+currentNode).mouseover(function(e){
-                  $(e.currentTarget).css("background-color","yellow");
-                  });
-                  $("#"+currentNode).mouseout(function(e){
-                    $(e.currentTarget).css("background-color","white");
-                  });
-                  currentNode++
-
-
                 link = link.replace(new RegExp( " ", "g" ), "_")
-                $.ajax({
+                /*$.ajax({
                   url: "/wiki/fetch",
                   dataType: 'text',
                   data: "page="+link,
@@ -304,7 +275,9 @@ var history = new Array();
                     var text= $('<div/>').html(data).text().replace(new RegExp("\\\\","g"),"\\\\");
                     initNodes(text,particleSystem);
                   }
-                });
+                });*/
+                initGraphFromUrl(link)
+                addToHistory({"name":name,"url":link}) 
               }
             }
             return false
@@ -414,7 +387,7 @@ var history = new Array();
     sys.addNode(title,{mass:50,fixed:true, text:title,expanded:false,root:true,sections:myobj.sections,links:myobj.links,url:myobj.title,unkillable:true})
     rootNode = sys.getNode(title)
     expandOnce(sys.getNode(title),sys)
-    
+    return title 
   }
 
   initGraphFromUrl = function(url){

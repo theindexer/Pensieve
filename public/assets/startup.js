@@ -1,4 +1,34 @@
      $(document).ready(function(){
+       $("#backwards").click(function(){
+         if(window.history_location-1 >=0 && window.history_location-1 < history.length){
+           curPlace = window.history_location-1
+           newcenter = history[curPlace]["url"]
+           initGraphFromUrl(newcenter)
+           window.history_location-=1;
+         }
+
+       });
+       $("#forwards").click(function(){
+         if(window.history_location+1 >=0 && window.history_location+1 < history.length){
+           curPlace = window.history_location+1
+           newcenter = history[curPlace]["url"]
+           initGraphFromUrl(newcenter)
+           window.history_location+=1
+         }
+       });
+       $("#down").click(function(){
+         var hist = $("#history_scroller")
+         hist[0].innerHTML="";
+         for (var i=0; i < history.length; i++){
+           item = "<a class='faux-link' target='_blank' href='http://en.wikipedia.org/wiki/"+history[i]["url"]+"'>Open in new tab</a>"
+           item += "<span class='history-span'><a class='history-span' href='javascript:initGraphFromUrl(\""+history[i]["url"]+"\")'>"+history[i]["name"]+"</a></span><br>"
+           hist.prepend(item)
+         }
+         $("#history_scroller").toggle('fast')
+       });
+
+
+
         function doSearch() {
               var searchData = {"page":$("#query").val().replace(new RegExp(" ","g"),"+")}
               $("#search-results").empty();
@@ -22,6 +52,9 @@
                     var url = result[this.id.substr(0,1)].getElementsByTagName("Url")[0].childNodes[0].nodeValue;
                     url = url.substr(url.indexOf("wiki/")+5)
                     initGraphFromUrl(url)
+                    history = new Array();
+                    window.history_location = -1
+                    addToHistory({"url":url,"name":result[this.id.substr(0,1)].getElementsByTagName("Text")[0].childNodes[0].nodeValue})
                     $( "#search-wikipedia" ).dialog( "close" );
                     emptyPath();
                     });
@@ -42,6 +75,7 @@
           success: function(data){
             var text= $('<div/\>').html(data).text();
             startGraph(text.replace("\\","\\\\","g"),"#nodes");
+            addToHistory({"name":"Wikipedia","url":"Wikipedia"})
           }
         });
         $('#search-wikipedia').keypress(function (e) {
@@ -124,7 +158,9 @@
             ctx.font = "12pt Arial"
             ctx.fillText(history[i]["name"],0,15+((-i+history.length-1)*30))
           }*/
+          history=history.slice(0,window.history_location+1)
           history.push(item)
+          window.history_location++
           var selecter = $("#history_select")
           selecter.prepend("<option selected='true' value="+item["url"]+">"+item["name"]+"</option>")
         }
