@@ -98,42 +98,58 @@ window.history_location = -1;
           // pt:   {x:#, y:#}  node position in screen coords
           var w = 30
           var rootColor = new Color(255,200,0)
+          var rootColorblind = new Color(178,233,130)
+
           var rootText = new Color(0,0,235)
           var sectColor = new Color(60,0,60)
+          var sectColorblind = new Color(51,160,44)
           var sectText = new Color(155,255,155)
-          var moreColor = new Color(80,0,150)
-          var lineargrad = ctx.createLinearGradient(pt.x,pt.y-w/2,pt.x,pt.y+w/2)
-          if (node.data.root){
-            lineargrad.addColorStop(0,"rgb("+rootColor.string+")")
-            lineargrad.addColorStop(.3,'rgb(255,255,60)')
-            lineargrad.addColorStop(.6,'rgb(255,255,60)')
-            lineargrad.addColorStop(1,"rgb("+rootColor.string+")")
-            ctx.fillStyle = lineargrad
-          } else if (node.data.holder){
-            lineargrad.addColorStop(0,"rgb("+moreColor.string+")")
-            lineargrad.addColorStop(.3,'rgb(100,10,200)')
-            lineargrad.addColorStop(.6,'rgb(100,10,200)')
-            lineargrad.addColorStop(1,"rgb("+moreColor.string+")")
-            ctx.fillStyle = lineargrad
-          } else if (!node.data.link){
-            lineargrad.addColorStop(0,"rgb("+sectColor.string+")")
-            lineargrad.addColorStop(.3,'rgb(110,0,100)')
-            lineargrad.addColorStop(.6,'rgb(110,0,100)')
-            lineargrad.addColorStop(1,"rgb("+sectColor.string+")")
-            ctx.fillStyle = lineargrad
-          }
-          if(node.data.link){
-            w=30
-            lineargrad.addColorStop(0,"rgb(0,0,180)")
-            lineargrad.addColorStop(.3,'rgb(0,0,255)')
-            lineargrad.addColorStop(.6,'rgb(0,0,255)')
-            lineargrad.addColorStop(1,"rgb(0,0,180)")
-            ctx.fillStyle = lineargrad
 
+          var moreColor = new Color(80,0,150)
+          var moreColorblind = new Color(166,206,227)
+          
+          var linkColorblind = new Color(31,120,180)
+          var lineargrad = ctx.createLinearGradient(pt.x,pt.y-w/2,pt.x,pt.y+w/2)
+          var color1, color2
+          if (node.data.root){
+            if (!colorblind){
+              color1 = "rgb("+rootColor.string+")"
+              color2 = 'rgb(255,255,60)'
+            } else {
+              color1 = "rgb("+rootColorblind.string+")"
+              color2 = "rgb(168,200,130)"
+            }
+          } else if (node.data.holder){
+            if (!colorblind){
+              color1 = "rgb("+moreColor.string+")"
+              color2 = 'rgb(100,10,200)'
+            } else {
+              color1 = "rgb("+moreColorblind.string+")"
+              color2 = "rgb(146,206,207)"
+            }
+          } else if (!node.data.link){
+            if(!colorblind){
+              color1 = "rgb("+sectColor.string+")"
+              color2 = 'rgb(110,0,100)'
+            } else {
+              color1 = "rgb("+sectColorblind.string+")"
+              color2 = "rgb(31,140,34)"
+            }
+          } else if(node.data.link){
+              w=30
+            if(!colorblind){
+              color1 = "rgb(0,0,180)"
+              color2 = 'rgb(0,0,255)'
+            } else {
+              color1 = "rgb("+linkColorblind.string+")"
+              color2 = "rgb(31,90,150)"
+            }
           }
-          if(colorblind){
-            ctx.fillStyle = "rgb(0,0,0)"
-          }
+          lineargrad.addColorStop(0,color1)
+          lineargrad.addColorStop(.3,color2)
+          lineargrad.addColorStop(.6,color2)
+          lineargrad.addColorStop(1,color1)
+          ctx.fillStyle = lineargrad
           ctx.font = "12pt Arial"
           var metrics = ctx.measureText(node.data.text);
           var width = Math.max(metrics.width,80);

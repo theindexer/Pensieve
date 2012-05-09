@@ -114,13 +114,12 @@
           self.focus();
         });
         $("#open-path").click(function(){
-          nodechilds = $("#nodes").children()
-          var i
-          for(i = 0; i < nodechilds.length; i++){
-      
-          window.open('http://en.wikipedia.org/wiki/'+$("#"+nodechilds[i].id).data("url"));
-          self.focus();
-          }
+          sys.eachNode(function(node,pt){
+            if (node.data.link){
+              window.open('http://en.wikipedia.org/wiki/'+node.data.url);
+              self.focus();
+            }
+          });
         });
         $("#save-path").click(function(){
           var data = history.slice(0)
