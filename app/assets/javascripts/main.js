@@ -5,7 +5,7 @@
 //
 var colorblind = false 
 var globalurl
-var history = new Array();
+window.history = new Array();
 window.history_location = -1;
 (function($){
   var maxLinks = 20
